@@ -1,34 +1,40 @@
 const express = require("express");
-const model = ("./models/model")
 const router = express.Router();
-
-let usuario = [];
+const model = require("../models/model"); // Importe o modelo
 
 router.get("/", (req, res) => {
-  res.json(usuario);
+  const usuarios = model.listarUsuarios();
+  res.json(usuarios);
 });
 
-
 router.post("/", (req, res) => {
-  const { id, nome, idade, salario, profissao } = req.body; // Correção na desestruturação
-  const novoUsuario = {id, nome, idade, salario, profissao };
-  usuario.push(novoUsuario);
+  const { id, nome, idade, salario, profissao } = req.body;
+  const novoUsuario = new model.Usuario(id, nome, idade, salario, profissao);
+  model.adicionarUsuario(novoUsuario);
   res.status(201).json(novoUsuario);
 });
 
- // Rota para atualizar um cadastro existente (PUT)
-router.put('/:id', (req, res) => {
-    const id = req.params.id;
-    const { nome, idade, salario, profissao  } = req.body;
-    usuario[id] = { nome, idade, salario, profissao };
-    res.json(usuario[id]);
-  });
+router.put("/:id", (req, res) => {
+  const id = req.params.id;
+  const { nome, idade, salario, profissao } = req.body;
 
-  router.delete('/:id', (req, res) => {
-    const id = req.params.id;
-    const usuarioExcluido = usuario.splice(id, 1);
+  const usuarioAtualizado = model.atualizarUsuario(id, nome, idade, salario, profissao);
+  if (usuarioAtualizado) {
+    res.json(usuarioAtualizado);
+  } else {
+    res.status(404).json({ error: 'Usuário não encontrado' });
+  }
+});
+
+router.delete("/:id", (req, res) => {
+  const id = req.params.id;
+
+  const usuarioExcluido = model.excluirUsuario(id);
+  if (usuarioExcluido) {
     res.json(usuarioExcluido);
-  });
-  
+  } else {
+    res.status(404).json({ error: 'Usuário não encontrado' });
+  }
+});
 
 module.exports = router;
