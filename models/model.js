@@ -20,7 +20,7 @@ function adicionarUsuario(usuario) {
 }
 
 function atualizarUsuario(id, nome, idade, salario, profissao) {
-  const usuario = usuarios.find(u => u.id === id);
+  const usuario = usuarios.find(u => u.id === parseInt(id)); // Converta o ID para inteiro
   if (usuario) {
     usuario.nome = nome;
     usuario.idade = idade;
@@ -32,13 +32,15 @@ function atualizarUsuario(id, nome, idade, salario, profissao) {
 }
 
 function excluirUsuario(id) {
-  const index = usuarios.findIndex(u => u.id === id);
+  const index = usuarios.findIndex(u => u.id === parseInt(id)); // Converta o ID para inteiro
   if (index !== -1) {
     const usuarioExcluido = usuarios.splice(index, 1);
     return usuarioExcluido[0];
   }
   return null;
 }
+
+
 
 module.exports = {
   Usuario,
