@@ -1,6 +1,9 @@
+// controller.js
 const express = require("express");
 const router = express.Router();
-const model = require("../models/model"); // Importe o modelo
+const model = require("../models/model");
+
+let lastUserId = 0; // Variável para controlar o último ID utilizado
 
 router.get("/", (req, res) => {
   const usuarios = model.listarUsuarios();
@@ -8,8 +11,11 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const { id, nome, idade, salario, profissao } = req.body;
-  const novoUsuario = new model.Usuario(id, nome, idade, salario, profissao);
+  const { nome, idade, salario, profissao } = req.body;
+
+  // Incrementar o ID antes de criar um novo usuário
+  lastUserId++;
+  const novoUsuario = new model.Usuario(lastUserId, nome, idade, salario, profissao);
   model.adicionarUsuario(novoUsuario);
   res.status(201).json(novoUsuario);
 });
